@@ -1,11 +1,16 @@
 package com.lxiSoft.snakeladder.model;
-
+  
 
 public class Board
 {
-	cell[] cells= new cell[100];
-	Ladder[] ladders= new ladder[5];
-	snake[] snakes= new snake[5];
-	player[] players= new player[5];
-	die d;
-}
+	private Cell[] cells= new Cell[100];
+	private Ladder[] ladders= new Ladder[5];
+	private Snake[] snakes= new Snake[5];
+	private Player[] players= new Player[5];
+	private Die die;
+	
+	
+	
+	
+	
+}  
