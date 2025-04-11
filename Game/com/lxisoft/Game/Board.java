@@ -1,5 +1,5 @@
 package com.lxisoft.Game;
-public class Board 
+public class Board
 {
 	Cell[] cells = new Cell[100];
 	Ladder[] ladders =new Ladder[5];
@@ -8,38 +8,43 @@ public class Board
 	Die d;
 	
 	
-	public void createSnake()
+	public void createSnakes()
 	{
-		Board board = new Board();
-		Snake s = new Snake();
-		int temp;
-		int head;
-		int tail;
 		boolean repeat = false;
 		
 		for(int j=0; j<5; j++)
 		{
-
-		do{
-			 head = (int)(Math.random()*100)+1;
-			 tail = (int)(Math.random()*100)+1;
+			Snake  s;
+           outerLoop:
+		   do{
+			 int head = (int)(Math.random()*100)+1;
+			 int tail = (int)(Math.random()*100)+1;
 			
 			if(tail>head)
 			{
-				temp = head;
+				int temp = head;
 				head = tail;
 				tail = temp;
 				
 			}
-			
-		for(int i=0; board.snakes[i]!=null; i++)
+			s = new Snake(head,tail);
+			int i=0;
+		for(; this.snakes[i]!=null; )
 		{
-			if((snakes[i].getHead())==(board.snakes[i].getHead()))
-			repeat =  true;
-		break;
-		}	}
+			if(this.snakes[i].getHead()==s.getHead()){
 		
-	
+			repeat =  true;
+			
+		break outerLoop;
+			}
+            i++;			
+			}
+		if(this.snakes[i]==null){
+			this.snakes[i]=s;
+			repeat = false;
+			
+		}
+	        }
 	
 		while(repeat);
 		}

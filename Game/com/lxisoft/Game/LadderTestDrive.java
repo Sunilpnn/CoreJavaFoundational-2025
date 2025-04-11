@@ -15,8 +15,11 @@ public class LadderTestDrive
 		System.out.println(die);
 	}
 	
-	board.createSnake();
-	
+	board.createSnakes();
+	for(int i=0; i<5; i++)
+	{
+	System.out.println(board.snakes[i]);
+	}
 	}
 	
 }

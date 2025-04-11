@@ -4,8 +4,10 @@ public class Snake
 	private int head;
 	private int tail;
 	
-	
-	
+	public Snake(int head,int tail){
+		this.head = head;
+		this.tail = tail;
+	}
 	public void setHead(int head)
 	{
 		this.head=head;
@@ -27,4 +29,8 @@ public class Snake
         return tail;
     }
 	
+	
+	public String toString(){
+		return "HEAD :"+head+"TAIL :"+tail;
+	}
 }
