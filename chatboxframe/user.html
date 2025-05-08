@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+	background-image:url("https://wallpapercave.com/wp/wp2757875.gif");
+	background-size:cover;
+	background-repeat:no-repeat;
+	background-position:center;
+	
+      font-family: Arial, sans-serif;
+     
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    form {
+      background-color: invisible;
+      padding: 20px;
+      border-radius: 8px;
+      width: 300px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin: 10px 0;
+      box-sizing: border-box;
+    }
+
+    input[type="submit"],
+    input[type="reset"] {
+      padding: 10px 20px;
+      margin-right: 10px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    input[type="reset"] {
+      background-color: #f44336;
+    }
+
+    input[type="submit"]:hover,
+    input[type="reset"]:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <form action="user.jsp">
+    <label>Enter your name</label>
+    <input type="text" name="user">
+    <br>
+    <input type="submit" value="login">
+    <input type="reset" value="logout">
+  </form>
+</body>
+</html>
