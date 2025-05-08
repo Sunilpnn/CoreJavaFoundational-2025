@@ -12,9 +12,9 @@ public class Board
 	{
 		boolean repeat = false;
 		
-		for(int j=0; j<5; j++)
+		for(int j=0; j<5; j++)     //create 5 snakes
 		{
-			Snake  s;
+			
            outerLoop:
 		   do{
 			 int head = (int)(Math.random()*100)+1;
@@ -27,14 +27,16 @@ public class Board
 				tail = temp;
 				
 			}
-			s = new Snake(head,tail);
+			Snake  s = new Snake(head,tail);    // use to set snake head and snake tail
 			int i=0;
 		for(; this.snakes[i]!=null; )
 		{
 			if(this.snakes[i].getHead()==s.getHead()){
 		
-			repeat =  true;
-			
+			repeat =  true;                //repeat helps us control whether to re-run the loop or not.If we find a snake with the same head already in the 
+			                                // array, we set repeat = true, which means "this snake is invalid, try again".If there's no conflict, 
+											 //we set repeat = false, meaning the snake is unique and can be added to the array.
+											 
 		break outerLoop;
 			}
             i++;			
