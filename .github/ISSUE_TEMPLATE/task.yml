@@ -1,0 +1,47 @@
+name: Task
+description: Track tasks with daily updates
+title: '[Repository] Task Title'
+labels: ['task']
+assignees: ['','']
+
+body:
+  - type: textarea
+    id: task-description
+    attributes:
+      label: Description
+      description: Describe the task or issue in detail.
+      placeholder: Provide details about what needs to be done.
+    validations:
+      required: true
+  - type: checkboxes
+    id: task-repository
+    attributes:
+      label: Repository
+      description: Select the repository this task applies to.
+      options:
+        - label: CoreJavaFoundational2025
+    
+       
+    validations:
+      required: true
+  - type: dropdown
+    id: task-priority
+    attributes:
+      label: Priority
+      description: Select the priority level for this task.
+      options:
+        - "Urgent"
+        - "High"
+        - "Medium"
+        - "Low"
+    validations:
+      required: true
+  - type: textarea
+    id: task-daily-updates
+    attributes:
+      label: Daily Updates
+      description: Provide daily updates on progress and blockers (update after submission via comments).
+      placeholder: |
+        - Date: What I did, what I’m doing, blockers (if any).
+    validations:
+      required: false
