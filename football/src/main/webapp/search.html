@@ -1,0 +1,136 @@
+<html>
+<body>
+
+    
+    <style>
+    body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Oswald', sans-serif;
+  background: url('https://imgs.search.brave.com/wy3P-EgI12nMAuX0bEUw1tOaHnpJUYqSIdcJSDD32BE/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly93d3cu/c3BvcnRzZHVuaWEu/Y29tL2Nkbi1jZ2kv/aW1hZ2Uvd2lkdGg9/Mzg0MCxvbmVycm9y/PXJlZGlyZWN0L2h0/dHBzOi8vc2Rwcm9k/c3RvcmFnZS5ibG9i/LmNvcmUud2luZG93/cy5uZXQvc2QtY21z/LXByb2QvY29udGVu/dC1pbWFnZS9lc3Bv/cnRzL2Vmb290YmFs/bC1iZXN0LWZvb3Ri/YWwtYW5kcm9pZC1n/YW1lLTEwMjR4NTM4/LndlYnA') 
+              no-repeat center center fixed;
+  background-size: cover;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+/* Glassmorphism Form */
+form {
+  padding: 40px 35px;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+h2 {
+  margin-bottom: 25px;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(0,0,0,0.6);
+}
+
+/* Input Fields */
+.input-field {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 14px 15px;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+input[type="text"]:focus {
+  border-color: #00e0ff;
+  background: rgba(255,255,255,0.15);
+  box-shadow: 0 0 10px #00e0ff;
+}
+
+label {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255,255,255,0.7);
+  pointer-events: none;
+  transition: 0.3s ease;
+}
+
+input[type="text"]:focus + label,
+input[type="text"]:not(:placeholder-shown) + label {
+  top: -12px;
+  font-size: 12px;
+  color: #00e0ff;
+}
+
+/* Submit Button */
+input[type="submit"] {
+  width: 100%;
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: #fff;
+  border: none;
+  padding: 14px;
+  font-size: 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  letter-spacing: 1px;
+  box-shadow: 0 5px 15px rgba(0, 114, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+input[type="submit"]:hover {
+  background: linear-gradient(135deg, #0072ff, #0044cc);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 114, 255, 0.6);
+}
+
+input[type="submit"]:active {
+  transform: scale(0.98);
+  box-shadow: 0 3px 8px rgba(0, 114, 255, 0.4);
+}
+
+/* Links */
+a {
+  display: block;
+  margin-top: 18px;
+  color: #00e0ff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #ffd700;
+}
+
+</style>
+
+
+
+<FORM ACTION="displayplayer.jsp" method="get">
+TeamName:<INPUT TYPE="text" NAME="name"><br>
+<INPUT TYPE="submit" VALUE="search"><br>
+<a href="teamdetails.jsp">go to team deatils page</a>
+</FORM>
+</body>
+</html>
