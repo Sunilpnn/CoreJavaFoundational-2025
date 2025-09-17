@@ -1,8 +1,10 @@
 <%@ page import="java.sql.*" %>
+<%@ page import="java.time.LocalDateTime" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Purchased Bill</title>
+    <title>Purchase Confirmation</title>
     <style>
         body { font-family: Arial; margin:20px; background:#f4f4f4; }
         table { width:100%; border-collapse: collapse; background:#fff; }
@@ -12,8 +14,9 @@
     </style>
 </head>
 <body>
-<h2>Purchased Bill</h2>
+<h2>Purchase Confirmation</h2>
 <a href="books.jsp" class="back-btn">⬅ Back to Books</a>
+
 <table>
     <thead>
         <tr>
@@ -21,75 +24,78 @@
             <th>Book Title</th>
             <th>Quantity</th>
             <th>Total Price</th>
+            <th>Purchase Date & Time</th>
         </tr>
     </thead>
     <tbody>
 <%
-String bookIdStr = request.getParameter("bookId");
+String bookIdStr = request.getParameter("bookId"); 
 String qtyStr = request.getParameter("qty");
 
-try {
-    Class.forName("com.mysql.cj.jdbc.Driver");
-    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookstore","root","root");
+if (bookIdStr != null && qtyStr != null && !qtyStr.isEmpty()) {
+    int bookId = Integer.parseInt(bookIdStr);
+    int qty = Integer.parseInt(qtyStr);
 
-    // Insert purchase if POST parameters exist
-    if(bookIdStr != null && qtyStr != null && !qtyStr.isEmpty()) {
-        int bookId = Integer.parseInt(bookIdStr);
-        int qty = Integer.parseInt(qtyStr);
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookstore","root","root");
 
-        PreparedStatement ps = con.prepareStatement("SELECT price FROM books WHERE book_id=?");
-        ps.setInt(1, bookId);
-        ResultSet rsPrice = ps.executeQuery();
-        if(rsPrice.next()){
-            double price = rsPrice.getDouble("price");
+        // Get book details
+        PreparedStatement psBook = con.prepareStatement("SELECT title, price FROM books WHERE book_id = ?");
+        psBook.setInt(1, bookId);
+        ResultSet rsBook = psBook.executeQuery();
+
+        if (rsBook.next()) {
+            String title = rsBook.getString("title");
+            double price = rsBook.getDouble("price");
             double totalPrice = price * qty;
 
+            // Get current date and time
+            LocalDateTime now = LocalDateTime.now ();
+            String formattedDateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+            // Insert into buy table (including purchase_datetime)
             PreparedStatement psInsert = con.prepareStatement(
-                "INSERT INTO buy(book_id, quantity, total_price) VALUES(?,?,?)");
+                "INSERT INTO buy (book_id, quantity, total_price, purchase_datetime) VALUES (?, ?, ?, ?)");
             psInsert.setInt(1, bookId);
             psInsert.setInt(2, qty);
             psInsert.setDouble(3, totalPrice);
+            psInsert.setString(4, formattedDateTime);
             psInsert.executeUpdate();
             psInsert.close();
+
+            // Display only current purchase
+%>
+            <tr>
+                <td><%= bookId %></td>
+                <td><%= title %></td>
+                <td><%= qty %></td>
+                <td>$<%= totalPrice %></td>
+                <td><%= formattedDateTime %></td>
+            </tr>
+<%
+        } else {
+%>
+            <tr><td colspan="5" style="color:red;">Book not found.</td></tr>
+<%
         }
-        rsPrice.close();
-        ps.close();
-    }
 
-    // Display all purchases
-    Statement stmt = con.createStatement();
-    ResultSet rs = stmt.executeQuery(
-        "SELECT b.book_id, bk.title, b.quantity, b.total_price " +
-        "FROM buy b JOIN books bk ON b.book_id = bk.book_id"
-    );
-
-    boolean hasData = false;
-    while(rs.next()){
-        hasData = true;
+        rsBook.close();
+        psBook.close();
+        con.close();
+    } catch(Exception e){
 %>
-        <tr>
-            <td><%= rs.getInt("book_id") %></td>
-            <td><%= rs.getString("title") %></td>
-            <td><%= rs.getInt("quantity") %></td>
-            <td>$<%= rs.getDouble("total_price") %></td>
-        </tr>
+        <tr><td colspan="5" style="color:red;">Error: <%= e.getMessage() %></td></tr>
 <%
     }
-    if(!hasData){
+} else {
 %>
-        <tr><td colspan="4" style="color:red;">No purchases yet.</td></tr>
-<%
-    }
-    rs.close();
-    stmt.close();
-    con.close();
-} catch(Exception e){
-%>
-        <tr><td colspan="4" style="color:red;">Error: <%= e.getMessage() %></td></tr>
+    <tr><td colspan="5" style="color:red;">Invalid request. Book ID or Quantity missing.</td></tr>
 <%
 }
 %>
     </tbody>
 </table>
+
 </body>
 </html>

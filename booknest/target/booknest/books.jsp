@@ -1,10 +1,18 @@
 <%@ page import="java.sql.*" %>
-<%@ page import="java.util.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!DOCTYPE html>
+<%
+    String role = (String) session.getAttribute("role");
+    String username = (String) session.getAttribute("username"); // Assuming username is stored in session
+    if (role == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+    String searchQuery = request.getParameter("search");
+%>
+ 
 <html>
 <head>
-    <title>Books List</title>
+    <title>Books List - BookNest</title>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -21,6 +29,26 @@
             margin-bottom: 30px;
         }
 
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-icon {
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            color: #2c3e50;
+        }
+
+        .user-icon img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -30,40 +58,9 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
         }
 
-        .search-form {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .search-form input {
-            padding: 10px;
-            font-size: 16px;
-            width: 250px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        .search-form button {
-            padding: 10px 20px;
-            background-color: #3498db;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .search-form button:hover {
-            background-color: #2980b9;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            background: #ffffff;
             margin-top: 20px;
         }
 
@@ -80,42 +77,21 @@
 
         .btn {
             padding: 8px 16px;
-            background-color: #2ecc71;
+            background-color: #3498db;
             color: #fff;
-            border: none;
-            border-radius: 6px;
             text-decoration: none;
+            border-radius: 6px;
             font-weight: bold;
             cursor: pointer;
             margin: 5px;
         }
 
+        .btn.delete {
+            background-color: #e74c3c;
+        }
+
         .btn.buy {
             background-color: #e67e22;
-        }
-
-        .user-info {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            background: #fff;
-            padding: 10px 15px;
-            border-radius: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-
-        .user-info img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .user-info span {
-            font-weight: bold;
-            color: #333;
         }
 
         .back-btn {
@@ -127,107 +103,120 @@
             text-decoration: none;
             border-radius: 6px;
         }
+
+        .search-form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .search-input {
+            padding: 8px;
+            width: 300px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        .search-btn {
+            padding: 8px 16px;
+            border: none;
+            background-color: #2ecc71;
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+        }
     </style>
 </head>
+
 <body>
 
-<%
-    String username = (String) session.getAttribute("username");
-    if (username != null) {
-%>
-    <div class="user-info">
-        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User Icon">
-        <span><%= username %></span>
+    <div class="header">
+    <h2>Books List</h2>
+    <div class="user-icon">
+        <span style="font-size: 24px; margin-right: 10px;">👤</span>
+        <span><%= (username != null) ? username : "User" %></span>
     </div>
-<%
-    }
-%>
+</div>
 
-<h2>Books List</h2>
+    <a href="home.jsp" class="back-btn">⬅ Back to Home</a>
 
-<a href="home.jsp" class="back-btn">⬅ Back to Home</a>
-
-<div class="container">
-    <!-- Search Form -->
-    <form method="get" class="search-form">
-        <input type="text" name="searchId" placeholder="Search by Book ID" value="<%= request.getParameter("searchId") != null ? request.getParameter("searchId") : "" %>">
-        <input type="text" name="searchTerm" placeholder="Search by Author or Title" value="<%= request.getParameter("searchTerm") != null ? request.getParameter("searchTerm") : "" %>">
-        <button type="submit">Search</button>
+    <form class="search-form" method="get" action="books.jsp">
+        <input type="text" name="search" class="search-input" placeholder="Search by title..." value="<%= (searchQuery != null) ? searchQuery : "" %>" />
+        <button type="submit" class="search-btn">🔍 Search</button>
     </form>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Book ID</th><th>Title</th><th>Author</th><th>Category</th><th>Price</th><th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <%
-                String searchTerm = request.getParameter("searchTerm");
-                String searchId = request.getParameter("searchId");
+    <% if ("admin".equals(role)) { %>
+        <a href="addBook.jsp" class="btn">➕ Add New Book</a>
+    <% } %>
 
-                try {
-                    Class.forName("com.mysql.cj.jdbc.Driver");
-                    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookstore","root","root");
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Book ID</th>
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <% if ("admin".equals(role)) { %>
+                        <th>Actions</th>
+                    <% } %>
+                    <th>Buy</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%
+                    try {
+                        Class.forName("com.mysql.cj.jdbc.Driver");
+                        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookstore", "root", "root");
+                        Statement stmt = con.createStatement();
+                        String query = "SELECT * FROM books";
+                        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+                            query += " WHERE title LIKE '%" + searchQuery.replace("'", "''") + "%'";
+                        }
+                        ResultSet rs = stmt.executeQuery(query);
 
-                    String query = "SELECT * FROM books WHERE 1=1";
+                        while (rs.next()) {
+                            int bookId = rs.getInt("book_id");
+                            String title = rs.getString("title");
+                            double price = rs.getDouble("price");
+                            int quantity = rs.getInt("quantity");
+                %>
+                <tr>
+                    <td><%= bookId %></td>
+                    <td><%= title %></td>
+                    <td>$<%= price %></td>
+                    <td><%= quantity %></td>
 
-                    if (searchId != null && !searchId.trim().isEmpty()) {
-                        query += " AND book_id = ?";
+                    <% if ("admin".equals(role)) { %>
+                        <td>
+                            <a href="editBook.jsp?id=<%= bookId %>" class="btn">Edit</a>
+                            <a href="deleteBook.jsp?id=<%= bookId %>" class="btn delete">Delete</a>
+                        </td>
+                    <% } %>
+
+                    <td>
+                        <form method="post" action="buybook.jsp" style="display:inline-block;">
+                            <input type="number" name="qty" value="1" min="1" max="<%= quantity %>" <%= (quantity == 0) ? "disabled" : "" %> />
+                            <input type="hidden" name="bookId" value="<%= bookId %>" />
+                            <button type="submit" class="btn buy" <%= (quantity == 0) ? "disabled" : "" %>>Buy</button>
+                        </form>
+                    </td>
+                </tr>
+                <%
+                        }
+
+                        rs.close();
+                        stmt.close();
+                        con.close();
+                    } catch (Exception e) {
+                %>
+                <tr><td colspan="6" style="color:red;">Error: <%= e.getMessage() %></td></tr>
+                <%
                     }
-
-                    if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-                        query += " AND (title LIKE ? OR author LIKE ?)";
-                    }
-
-                    PreparedStatement pstmt = con.prepareStatement(query);
-
-                    int paramIndex = 1;
-                    if (searchId != null && !searchId.trim().isEmpty()) {
-                        pstmt.setInt(paramIndex++, Integer.parseInt(searchId));
-                    }
-
-                    if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-                        String pattern = "%" + searchTerm + "%";
-                        pstmt.setString(paramIndex++, pattern);
-                        pstmt.setString(paramIndex++, pattern);
-                    }
-
-                    ResultSet rs = pstmt.executeQuery();
-                    while(rs.next()) {
-            %>
-            <tr>
-                <td><%= rs.getInt("book_id") %></td>
-                <td><%= rs.getString("title") %></td>
-                <td><%= rs.getString("author") %></td>
-                <td><%= rs.getString("category") != null ? rs.getString("category") : "N/A" %></td>
-                <td>$<%= rs.getDouble("price") %></td>
-                <td>
-                    <form action="Cart.jsp" method="post" style="display:inline;">
-                        <input type="hidden" name="bookId" value="<%= rs.getInt("book_id") %>">
-                        <input type="hidden" name="qty" value="1">
-                        <button type="submit" class="btn">Add to Cart</button>
-                    </form>
-
-                    <form action="billing.jsp" method="get" style="display:inline;">
-                        <input type="hidden" name="bookId" value="<%= rs.getInt("book_id") %>">
-                        <input type="hidden" name="qty" value="1">
-                        <button type="submit" class="btn buy">Buy</button>
-                    </form>
-                </td>
-            </tr>
-            <%
-                    }
-                    rs.close();
-                    pstmt.close();
-                    con.close();
-                } catch(Exception e) {
-                    out.println("<tr><td colspan='6' style='color:red;'>Error: "+e.getMessage()+"</td></tr>");
-                }
-            %>
-        </tbody>
-    </table>
-</div>
+                %>
+            </tbody>
+        </table>
+    </div>
 
 </body>
 </html>
